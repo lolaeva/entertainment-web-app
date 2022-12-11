@@ -1,58 +1,11 @@
-import data from './data.json'
-import ShowItem from './components/ShowItem'
-import Nav from './components/Nav'
-import Search from './components/Search'
 import { useState } from 'react'
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom'
-
-const GeneralSection = ({ showsData, title, searchText, isHomePage = false }) => {
-  return (
-    <section className="general-section">
-      {!isHomePage && !searchText && (
-        <h1>{!isHomePage && searchText ? `Search results for ${searchText}` : title}</h1>
-      )}
-
-      <div className="general-section-items">
-        {showsData.map((show) => (
-          <ShowItem key={show.title} show={show} isTrendingPage={false} />
-        ))}
-      </div>
-    </section>
-  )
-}
-
-const TrendingSection = ({ showsData, searchText }) => {
-  return (
-    <section className="trending-section">
-      <h1>{searchText ? `Search results for ${searchText}` : 'Trending'}</h1>
-      <div className="trending-scroll-section">
-        {showsData.map((show) => (
-          <ShowItem key={show.title} show={show} isTrendingPage={true} />
-        ))}
-      </div>
-    </section>
-  )
-}
-
-const Home = ({ showsData, searchText }) => {
-  const trendingShows = showsData.filter((show) => show.isTrending)
-  const generalShows = showsData.filter((show) => !show.isTrending)
-  return (
-    <>
-      <TrendingSection showsData={trendingShows} searchText={searchText} />
-      <GeneralSection
-        showsData={generalShows}
-        title="Recommended for you"
-        searchText={searchText}
-        isHomePage={true}
-      />
-    </>
-  )
-}
-
-const NoPage = () => {
-  return <div>No such page </div>
-}
+import data from './data.json'
+import GeneralSection from './components/GeneralSection'
+import Home from './components/Home'
+import Nav from './components/Nav'
+import Search from './components/Search'
+import NoPage from './components/NoPage'
 
 const Layout = ({ setSearchText, searchText }) => {
   const location = useLocation()
