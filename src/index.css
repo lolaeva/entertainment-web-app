@@ -190,3 +190,43 @@ p.item-details__title {
   align-items: center;
   justify-content: center;
 }
+
+
+.trending-scroll-section {
+  display: flex;
+  overflow-x: auto;
+  width: calc(100vw - var(--scrollbar-width));
+  margin-bottom: 50px;
+  -ms-overflow-style: none; /* Hide the scrollbar for MS Edge */
+  scrollbar-width: none; /* Hide the scrollbar for Mozilla Firefox */
+}
+
+.trending-scroll-section::-webkit-scrollbar {
+  display: none; /* Hide the scrollbar on Webkit based browsers (Chrome, Safari, etc) */
+  -webkit-overflow-scrolling: touch; /* On touch screens the content continues to scroll for a while after finishing the scroll gesture */
+}
+
+.item.trending {
+  height: 250px;
+  margin-right: 50px;
+}
+
+.trending .item-background {
+  height: 100%;
+}
+
+.trending .item-image {
+  width: auto;
+  height: 100%;
+}
+
+.trending .item-details {
+  left: 20px;
+  bottom: 15px;
+}
+
+.trending {
+  letter-spacing: 2px;
+  font-size: 1.4rem;
+}
+
