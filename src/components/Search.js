@@ -10,7 +10,7 @@ const Search = ({ searchPlaceholder, handleSearch, value }) => {
         className="input search-input"
         type="search"
         placeholder={searchPlaceholder}
-        onChange={handleSearch}
+        onChange={({ target }) => handleSearch(target.value)}
         value={value}
         autoFocus
       />
