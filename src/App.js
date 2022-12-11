@@ -1,7 +1,8 @@
 import showsData from './data.json'
 import ShowItem from './components/ShowItem'
 import Nav from './components/Nav'
-import { Routes, Route, Outlet, Link } from 'react-router-dom'
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import Search from './components/Search'
 
 const GeneralSection = ({ showsData }) => {
   return (
@@ -40,10 +41,24 @@ const NoPage = () => {
 }
 
 const Layout = () => {
+  const location = useLocation()
+  const searchPlaceholder = `Search for ${
+    location.pathname === '/tvseries'
+      ? 'TV series'
+      : location.pathname === '/bookmarks'
+      ? 'bookmarked shows'
+      : location.pathname === '/movies'
+      ? 'movies'
+      : 'movies or TV series'
+  }`
+  const handleSearch = () => {
+    console.log('search')
+  }
   return (
     <>
       <Nav />
       <main>
+        <Search searchPlaceholder={searchPlaceholder} handleSearch={handleSearch} />
         <Outlet />
       </main>
     </>
