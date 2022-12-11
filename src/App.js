@@ -1,5 +1,6 @@
 import showsData from './data.json'
 import ShowItem from './components/ShowItem'
+import Nav from './components/Nav'
 
 function App() {
   console.log(showsData)
@@ -11,6 +12,8 @@ function App() {
 
   return (
     <div className="App">
+      <Nav />
+      <main>
       <section className="trending-section">
         <div className="trending-scroll-section">
           {trendingShows.map((show) => (
@@ -23,6 +26,8 @@ function App() {
           <ShowItem key={show.title} show={show} isTrendingPage={false} />
         ))}
       </section>
+
+      </main>
     </div>
   )
 }
