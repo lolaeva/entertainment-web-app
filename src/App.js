@@ -1,12 +1,15 @@
 import showsData from './data.json'
+import ShowItem from './components/ShowItem'
 
 function App() {
   console.log('data', showsData)
   return (
     <div className="App">
-      {showsData.map((show) => (
-        <div key={show.title}>{show.title}</div>
-      ))}
+      <section className="general-section">
+        {showsData.map((show) => (
+          <ShowItem key={show.title} show={show} isTrendingPage={false} />
+        ))}
+      </section>
     </div>
   )
 }
