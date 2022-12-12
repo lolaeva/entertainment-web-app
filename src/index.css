@@ -11,10 +11,11 @@
   --margin-left-desktop: 170px;
   --margin-left-tablet: 30px;
   --margin-left-mobile: 15px;
-  --padding-top-desktop: 60px;
+  --padding-top-desktop: 35px;
   --padding-top-tablet: 130px;
   --search-height: 40px;
   --item-border-radius: 10px;
+  --item-height-desktop: 180px;
   --scrollbar-width: calc(100vw - 100%);
 }
 
@@ -35,12 +36,12 @@ div,
 input,
 p,
 span {
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   font-weight: 400;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 400;
 }
 
@@ -167,16 +168,18 @@ a {
   display: flex;
   align-items: center;
   color: var(--grayscale-0-color);
-  margin-bottom: 50px;
+  margin-bottom: 25px;
 }
 
 .search-input {
   height: 100%;
   width: 100%;
   border: none;
+  font-size: 1.2rem;
 }
 
 ::-webkit-input-placeholder {
+  font-size: 1.2rem;
   color: var(--grayscale-2-color);
 }
 
@@ -185,16 +188,21 @@ a {
   height: 70%;
 }
 
+.general-section h1, .trending-section h1 {
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
 .general-section-items {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   grid-gap: 1rem;
   margin-right: 50px;
 }
 
 .item {
   position: relative;
-  height: calc(225px + 50px);
+  height: calc(var(--item-height-desktop) + 50px);
   cursor: pointer;
 }
 
@@ -306,7 +314,7 @@ p.item-details__title {
   display: flex;
   overflow-x: auto;
   width: calc(100vw - var(--scrollbar-width));
-  margin-bottom: 50px;
+  padding-bottom: 25px;
   -ms-overflow-style: none; /* Hide the scrollbar for MS Edge */
   scrollbar-width: none; /* Hide the scrollbar for Mozilla Firefox */
 }
@@ -317,7 +325,7 @@ p.item-details__title {
 }
 
 .item.trending {
-  height: 250px;
+  height: 230px;
   margin-right: 50px;
 }
 
@@ -348,6 +356,7 @@ p.item-details__title {
     width: calc(100vw - var(--margin-left-tablet));
   }
   .navigation {
+    position: absolute;
     height: 90px;
     width: calc(100vw - 120px);
     left: 30px;

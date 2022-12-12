@@ -1,13 +1,19 @@
+import { useState } from 'react'
 import EmptyBookmarkIcon from '../assets/icons/icon-bookmark-empty.svg'
 import FullBookmarkIcon from '../assets/icons/icon-bookmark-full.svg'
 import MovieIcon from '../assets/icons/icon-category-movie.svg'
 import TvIcon from '../assets/icons/icon-category-tv.svg'
 import PlayIcon from '../assets/icons/icon-play.svg'
 
-const ShowItem = ({ show, isTrendingPage }) => {
+const ShowItem = ({ show, isTrendingPage, setBookmark }) => {
+  const [bookmarkedStatus, setBookmarkedStatus] = useState(show.isBookmarked)
   let imgLink = isTrendingPage ? show.thumbnail.trending.large : show.thumbnail.regular.large
   imgLink = imgLink.replace('./assets/', '')
-  const bookmarkedStatus = show.isBookmarked
+
+  const handleBookmark = () => {
+    setBookmarkedStatus(!show.isBookmarked)
+    setBookmark(show)
+  }
 
   return (
     <div className={`item ${isTrendingPage ? 'trending' : ''}`}>
@@ -33,7 +39,7 @@ const ShowItem = ({ show, isTrendingPage }) => {
         </div>
         <p className="item-details__title">{show.title}</p>
       </div>
-      <div className="item-bookmark">
+      <div className="item-bookmark" onClick={handleBookmark}>
         {bookmarkedStatus ? (
           <img src={FullBookmarkIcon} alt="Full bookmark icon" />
         ) : (

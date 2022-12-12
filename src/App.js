@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import data from './data.json'
 import GeneralSection from './components/GeneralSection'
@@ -40,7 +40,17 @@ const Layout = ({ setSearchText, searchText }) => {
 
 function App() {
   const [searchText, setSearchText] = useState('')
-  let showsData = data.filter((s) => s.title.toLowerCase().includes(searchText.toLowerCase()))
+  const [showsData, setShowsData] = useState(data)
+
+  useEffect(() => {
+    setShowsData(data.filter((s) => s.title.toLowerCase().includes(searchText.toLowerCase())))
+  }, [setShowsData, searchText])
+
+  const setBookmark = (show) => {
+    setShowsData(
+      showsData.map((s) => (s.title !== show.title ? s : { ...s, isBookmarked: !s.isBookmarked }))
+    )
+  }
 
   const movies = showsData.filter((show) => show.category === 'Movie')
   const tvSeries = showsData.filter((show) => show.category === 'TV Series')
@@ -49,15 +59,32 @@ function App() {
   return (
     <Routes className="App">
       <Route path="/" element={<Layout searchText={searchText} setSearchText={setSearchText} />}>
-        <Route index element={<Home showsData={showsData} searchText={searchText} />} />
+        <Route
+          index
+          element={
+            <Home showsData={showsData} searchText={searchText} setBookmark={setBookmark} />
+          }
+        />
         <Route
           path="movies"
-          element={<GeneralSection showsData={movies} title="Movies" searchText={searchText} />}
+          element={
+            <GeneralSection
+              showsData={movies}
+              title="Movies"
+              searchText={searchText}
+              setBookmark={setBookmark}
+            />
+          }
         />
         <Route
           path="tvseries"
           element={
-            <GeneralSection showsData={tvSeries} title="TV Series" searchText={searchText} />
+            <GeneralSection
+              showsData={tvSeries}
+              title="TV Series"
+              searchText={searchText}
+              setBookmark={setBookmark}
+            />
           }
         />
         <Route
@@ -67,6 +94,7 @@ function App() {
               showsData={bookmarkedShows}
               title="Bookmarked"
               searchText={searchText}
+              setBookmark={setBookmark}
             />
           }
         />
