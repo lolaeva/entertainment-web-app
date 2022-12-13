@@ -6,6 +6,16 @@ import Home from './components/Home'
 import Nav from './components/Nav'
 import Search from './components/Search'
 import NoPage from './components/NoPage'
+import Login from './components/Login'
+
+
+const LoginLayout = () => {
+  return (
+    <>
+      <Outlet />
+    </>
+  )
+}
 
 const Layout = ({ setSearchText, searchText }) => {
   const location = useLocation()
@@ -56,14 +66,17 @@ function App() {
   const tvSeries = showsData.filter((show) => show.category === 'TV Series')
   const bookmarkedShows = showsData.filter((show) => show.isBookmarked)
 
+  
+
   return (
     <Routes className="App">
+      <Route path="/" element={<LoginLayout />}>
+        <Route path="login" element={<Login />} />
+      </Route>
       <Route path="/" element={<Layout searchText={searchText} setSearchText={setSearchText} />}>
         <Route
           index
-          element={
-            <Home showsData={showsData} searchText={searchText} setBookmark={setBookmark} />
-          }
+          element={<Home showsData={showsData} searchText={searchText} setBookmark={setBookmark} />}
         />
         <Route
           path="movies"
