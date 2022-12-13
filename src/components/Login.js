@@ -6,12 +6,11 @@ import Logo from '../assets/icons/logo.svg'
 import loginService from '../services/loginService'
 
 
-const Login = () => {
+const Login = ({setToken}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
   const location = useLocation()
-
   let from = location.state?.from?.pathname || '/'
 
   const handleLogin = async (e) => {
@@ -20,6 +19,7 @@ const Login = () => {
     if(user.token) {
       localStorage.setItem('user-token', user.token)
       navigate(from, { replace: true })
+      setToken(user.token)
     }
   }
 

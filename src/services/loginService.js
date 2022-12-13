@@ -5,4 +5,9 @@ const login = (data) => {
   return request.then((response) => response.data)
 }
 
-export default {login}
+const signup = (data) => {
+  const request = axios.post('/signup', data)
+  return request.then((response) => response.data)
+}
+
+export default {login, signup}

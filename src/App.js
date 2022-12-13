@@ -11,19 +11,32 @@ import Login from './components/Login'
 
 import showsService from './services/showsService'
 
-const RequireAuth = ({children}) => {
-  const token = localStorage.getItem('user-token')
-  const decodedToken = jwt_decode(token)
-  const currentDate  = new Date()
-  let location = useLocation()
+const getToken = (token) => {
+  // const token = localStorage.getItem('user-token')
 
-  if (!token || decodedToken.exp * 1000 < currentDate.getTime()) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+  if (token && token !== 'null' && token !== 'undefined') {
+    const decodedToken = jwt_decode(token)
+    const currentDate = new Date()
+
+    if (decodedToken.exp * 1000 < currentDate.getTime()) {
+      return false
+    }
+    return token
+  } else {
+    return false
   }
-  
-  return children
 }
 
+const RequireAuth = ({ children }) => {
+  let location = useLocation()
+  const token = localStorage.getItem('user-token')
+
+  if (!getToken(token)) {
+    return <Navigate to="/login" state={{ from: location }} replace />
+  }
+
+  return children
+}
 
 const LoginLayout = () => {
   return (
@@ -33,7 +46,7 @@ const LoginLayout = () => {
   )
 }
 
-const Layout = ({ setSearchText, searchText }) => {
+const Layout = ({ setSearchText, searchText, setToken }) => {
   const location = useLocation()
   const searchPlaceholder = `Search for ${
     location.pathname === '/tvseries'
@@ -51,7 +64,7 @@ const Layout = ({ setSearchText, searchText }) => {
 
   return (
     <RequireAuth>
-      <Nav />
+      <Nav setToken={setToken} />
       <main>
         <Search
           searchPlaceholder={searchPlaceholder}
@@ -67,13 +80,15 @@ const Layout = ({ setSearchText, searchText }) => {
 function App() {
   const [searchText, setSearchText] = useState('')
   const [showsData, setShowsData] = useState([])
+  const [token, setToken] = useState(localStorage.getItem('user-token'))
 
   useEffect(() => {
-    showsService.getAll().then(shows => {
-      console.log('shows', shows);
-      setShowsData(shows)
-    })
-  }, [setShowsData])
+    if(getToken(token)) {
+      showsService.getAll().then((shows) => {
+        setShowsData(shows)
+      })
+    }
+  }, [setShowsData, token])
 
   const setBookmark = (show) => {
     setShowsData(
@@ -85,13 +100,12 @@ function App() {
   const tvSeries = showsData.filter((show) => show.category === 'TV Series')
   const bookmarkedShows = showsData.filter((show) => show.isBookmarked)
 
-  
   return (
     <Routes className="App">
       <Route path="/" element={<LoginLayout />}>
-        <Route path="login" element={<Login />} />
+        <Route path="login" element={<Login setToken={setToken}/>} />
       </Route>
-      <Route path="/" element={<Layout searchText={searchText} setSearchText={setSearchText} />}>
+      <Route path="/" element={<Layout searchText={searchText} setSearchText={setSearchText} setToken={setToken} />}>
         <Route
           index
           element={<Home showsData={showsData} searchText={searchText} setBookmark={setBookmark} />}

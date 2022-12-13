@@ -1,13 +1,24 @@
 import { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Logo from '../assets/icons/logo.svg'
+import loginService from '../services/loginService'
 
 const Signup = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const navigate = useNavigate()
+  const location = useLocation()
+  let from = location.state?.from?.pathname || '/'
 
-  const signup = (e) => {
+
+  const signup = async (e) => {
     e.preventDefault()
+    const user = await loginService.signup({email, password})
+    if(user.token) {
+      localStorage.setItem('user-token', user.token)
+      navigate(from, { replace: true })
+    }
   }
 
   const checkPassword = () => {

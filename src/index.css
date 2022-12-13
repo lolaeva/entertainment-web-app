@@ -162,6 +162,23 @@ a {
   border-radius: 5px;
 }
 
+.avatar__settings::after {
+  width: 0;
+  height: 0;
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: 10px solid white;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+
+.avatar__settings.hidden {
+  display: none;
+}
+
 .search {
   width: 100%;
   height: var(--search-height);
@@ -426,6 +443,7 @@ p {
     flex-direction: row;
     align-items: center;
   }
+
   .navigation .avatar,
   .navigation .icons {
     margin-left: auto;
@@ -433,10 +451,12 @@ p {
   .navigation .icons li {
     margin-left: 25px;
   }
+
   .navigation .avatar,
   .navigation .icons li {
     margin-top: 0;
   }
+
   .navigation .logo {
     margin-bottom: 0;
   }
