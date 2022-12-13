@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Logo from '../assets/icons/logo.svg'
@@ -16,9 +16,11 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    console.log('login', email, password);
     const user = await loginService.login({email, password})
-    console.log("🚀 ~ file: Login.js:21 ~ handleLogin ~ user", user)
+    if(user.token) {
+      localStorage.setItem('user-token', user.token)
+      navigate(from, { replace: true })
+    }
   }
 
 

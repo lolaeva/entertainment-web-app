@@ -1,12 +1,28 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, Outlet, useLocation } from 'react-router-dom'
-import data from './data.json'
+import { Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
+import jwt_decode from 'jwt-decode'
+
 import GeneralSection from './components/GeneralSection'
 import Home from './components/Home'
 import Nav from './components/Nav'
 import Search from './components/Search'
 import NoPage from './components/NoPage'
 import Login from './components/Login'
+
+import showsService from './services/showsService'
+
+const RequireAuth = ({children}) => {
+  const token = localStorage.getItem('user-token')
+  const decodedToken = jwt_decode(token)
+  const currentDate  = new Date()
+  let location = useLocation()
+
+  if (!token || decodedToken.exp * 1000 < currentDate.getTime()) {
+    return <Navigate to="/login" state={{ from: location }} replace />
+  }
+  
+  return children
+}
 
 
 const LoginLayout = () => {
@@ -34,7 +50,7 @@ const Layout = ({ setSearchText, searchText }) => {
   }
 
   return (
-    <>
+    <RequireAuth>
       <Nav />
       <main>
         <Search
@@ -44,17 +60,20 @@ const Layout = ({ setSearchText, searchText }) => {
         />
         <Outlet />
       </main>
-    </>
+    </RequireAuth>
   )
 }
 
 function App() {
   const [searchText, setSearchText] = useState('')
-  const [showsData, setShowsData] = useState(data)
+  const [showsData, setShowsData] = useState([])
 
   useEffect(() => {
-    setShowsData(data.filter((s) => s.title.toLowerCase().includes(searchText.toLowerCase())))
-  }, [setShowsData, searchText])
+    showsService.getAll().then(shows => {
+      console.log('shows', shows);
+      setShowsData(shows)
+    })
+  }, [setShowsData])
 
   const setBookmark = (show) => {
     setShowsData(
@@ -67,7 +86,6 @@ function App() {
   const bookmarkedShows = showsData.filter((show) => show.isBookmarked)
 
   
-
   return (
     <Routes className="App">
       <Route path="/" element={<LoginLayout />}>
