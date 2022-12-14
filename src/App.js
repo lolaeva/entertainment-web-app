@@ -10,6 +10,7 @@ import NoPage from './components/NoPage'
 import Login from './components/Login'
 
 import showsService from './services/showsService'
+import Signup from './components/Signup'
 
 const getToken = (token) => {
   // const token = localStorage.getItem('user-token')
@@ -104,6 +105,7 @@ function App() {
     <Routes className="App">
       <Route path="/" element={<LoginLayout />}>
         <Route path="login" element={<Login setToken={setToken}/>} />
+        <Route path="signup" element={<Signup setToken={setToken}/>} />
       </Route>
       <Route path="/" element={<Layout searchText={searchText} setSearchText={setSearchText} setToken={setToken} />}>
         <Route

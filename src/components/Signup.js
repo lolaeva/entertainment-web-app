@@ -1,29 +1,57 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Logo from '../assets/icons/logo.svg'
 import loginService from '../services/loginService'
 
-const Signup = () => {
+const Signup = ({setToken}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [checkPassword, setCheckPassword] = useState('')
+  const [error, setError] = useState(null)
+  const [buttonDisabled, setButtonDisabled] = useState(true)
   const navigate = useNavigate()
   const location = useLocation()
   let from = location.state?.from?.pathname || '/'
 
-
   const signup = async (e) => {
     e.preventDefault()
-    const user = await loginService.signup({email, password})
-    if(user.token) {
+    const user = await loginService.signup({ email, password })
+    if (user.token) {
       localStorage.setItem('user-token', user.token)
       navigate(from, { replace: true })
+      setToken(user.token)
     }
   }
 
-  const checkPassword = () => {
-
+  const isPasswordEqual = (first, second) => {
+    if (first === second) return true
+    else return false
   }
+
+  
+
+  useEffect(() => {
+    const checkPasswordEquality = () => {
+      if (isPasswordEqual(password, checkPassword)) {
+        setPassword(password)
+        setError(null)
+        setButtonDisabled(false)
+        return true
+      } else {
+        // show error
+        setError('Password is not equal')
+        setButtonDisabled(true)
+        return false
+      }
+    }
+
+    if (password && checkPassword && password.length === checkPassword.length) {
+      checkPasswordEquality()
+    } else {
+      setButtonDisabled(true)
+    }
+  }, [password, checkPassword])
 
   return (
     <div className="signup login-section">
@@ -36,22 +64,26 @@ const Signup = () => {
           <input
             className="input"
             type="email"
+            value={email}
             placeholder="Email address"
             onInput={(e) => setEmail(e.target.value)}
           />
           <input
             className="input"
             type="password"
+            value={password}
             placeholder="Password"
             onInput={(e) => setPassword(e.target.value)}
           />
           <input
             className="input"
             type="password"
+            value={checkPassword}
             placeholder="Repeat password"
-            onInput={(e) => checkPassword(e.target.value)}
+            onInput={(e) => setCheckPassword(e.target.value)}
           />
-          <button className="button" onClick={signup}>
+          {error && <div className='error-message'>{error}</div>}
+          <button className="button" onClick={signup} disabled={buttonDisabled}>
             Signup
           </button>
         </form>
