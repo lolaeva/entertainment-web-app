@@ -5,6 +5,8 @@
   --primary-color: #161d2f;
   --secondary-color: #5a698f;
   --focus-color: #fc4747;
+  --error-color: #ad3535;
+  --success-color: #20be8c;
   --grayscale-0-color: #ffff;
   --grayscale-1-color: #dddd;
   --grayscale-2-color: #bbbb;
@@ -127,8 +129,11 @@ a {
   transform: translate(-50%, -50px);
 }
 
+.notification.success {
+  background-color: var(--success-color);
+}
 .notification.error {
-  background-color: var(--focus-color);
+  background-color: var(--error-color);
 }
 
 .notification-message {

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import Logo from '../assets/icons/logo.svg'
 import loginService from '../services/loginService'
 
-const Signup = ({setToken}) => {
+const Signup = ({setToken, setNotification}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [checkPassword, setCheckPassword] = useState('')
@@ -17,10 +17,20 @@ const Signup = ({setToken}) => {
   const signup = async (e) => {
     e.preventDefault()
     const user = await loginService.signup({ email, password })
-    if (user.token) {
-      localStorage.setItem('user-token', user.token)
-      navigate(from, { replace: true })
-      setToken(user.token)
+
+    try {
+      const user = await loginService.login({ email, password })
+      if (user && user.token) {
+        localStorage.setItem('user-token', user.token)
+        navigate(from, { replace: true })
+        setToken(user.token)
+      }
+    } catch (error) {
+      let errorMessage = error?.response?.data?.error
+        ? error?.response?.data?.error
+        : 'Something went wrong, please try again'
+
+      setNotification({ message: errorMessage, type: 'error' })
     }
   }
 

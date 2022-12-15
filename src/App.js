@@ -12,10 +12,9 @@ import Signup from './components/Signup'
 import NoPage from './components/NoPage'
 
 import showsService from './services/showsService'
+import usersService from './services/usersService'
 
 const getToken = (token) => {
-  // const token = localStorage.getItem('user-token')
-
   if (token && token !== 'null' && token !== 'undefined') {
     const decodedToken = jwt_decode(token)
     const currentDate = new Date()
@@ -23,7 +22,7 @@ const getToken = (token) => {
     if (decodedToken.exp * 1000 < currentDate.getTime()) {
       return false
     }
-    return token
+    return decodedToken
   } else {
     return false
   }
@@ -40,10 +39,10 @@ const RequireAuth = ({ children }) => {
   return children
 }
 
-const LoginLayout = ({notification}) => {
+const LoginLayout = ({ notification }) => {
   return (
     <>
-      <Notification notification={notification}/>
+      <Notification notification={notification} />
       <Outlet />
     </>
   )
@@ -85,24 +84,38 @@ function App() {
   const [searchText, setSearchText] = useState('')
   const [showsData, setShowsData] = useState([])
   const [notification, setNotification] = useState({})
+  const [user, setUser] = useState({})
   const [token, setToken] = useState(localStorage.getItem('user-token'))
 
   useEffect(() => {
-    if(getToken(token)) {
+    const decodedToken = getToken(token)
+
+    if (decodedToken) {
+      setUser({ email: decodedToken.email, id: decodedToken.id })
       showsService.getAll().then((shows) => {
-        setShowsData(shows)
+        usersService.getOneUser(decodedToken.id).then((user) => {
+          user.bookmarkedShows.forEach((bookmarkedShow) => {
+            shows.forEach((show) => {
+              if (show.title === bookmarkedShow.title) {
+                show.isBookmarked = true
+              }
+            })
+          })
+          setShowsData(shows)
+        })
       })
     }
   }, [setShowsData, token])
 
-  const setBookmark = (show) => {
-    setShowsData(
-      showsData.map((s) => (s.title !== show.title ? s : { ...s, isBookmarked: !s.isBookmarked }))
-    )
+  const setBookmark = async (show) => {
+    usersService.setBookmark(user.id, show.id).then(() => {
+      setShowsData(
+        showsData.map((s) => (s.title !== show.title ? s : { ...s, isBookmarked: !s.isBookmarked }))
+      )
+    })
   }
 
   let timeoutID
-
   const handleNotification = (value) => {
     setNotification(value)
     clearTimeout(timeoutID)
@@ -117,11 +130,22 @@ function App() {
 
   return (
     <Routes className="App">
-      <Route path="/" element={<LoginLayout notification={notification}/>}>
-        <Route path="login" element={<Login setToken={setToken} setNotification={handleNotification}/>} />
-        <Route path="signup" element={<Signup setToken={setToken}/>} />
+      <Route path="/" element={<LoginLayout notification={notification} />}>
+        <Route
+          path="login"
+          element={<Login setToken={setToken} setNotification={handleNotification} />}
+        />
+        <Route
+          path="signup"
+          element={<Signup setToken={setToken} setNotification={handleNotification} />}
+        />
       </Route>
-      <Route path="/" element={<Layout searchText={searchText} setSearchText={setSearchText} setToken={setToken} />}>
+      <Route
+        path="/"
+        element={
+          <Layout searchText={searchText} setSearchText={setSearchText} setToken={setToken} />
+        }
+      >
         <Route
           index
           element={<Home showsData={showsData} searchText={searchText} setBookmark={setBookmark} />}
