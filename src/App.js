@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react'
 import { Routes, Route, Outlet, useLocation, Navigate } from 'react-router-dom'
 import jwt_decode from 'jwt-decode'
 
-import GeneralSection from './components/GeneralSection'
-import Home from './components/Home'
+import Notification from './components/Notification'
 import Nav from './components/Nav'
 import Search from './components/Search'
-import NoPage from './components/NoPage'
+import GeneralSection from './components/GeneralSection'
+import Home from './components/Home'
 import Login from './components/Login'
+import Signup from './components/Signup'
+import NoPage from './components/NoPage'
 
 import showsService from './services/showsService'
-import Signup from './components/Signup'
 
 const getToken = (token) => {
   // const token = localStorage.getItem('user-token')
@@ -39,9 +40,10 @@ const RequireAuth = ({ children }) => {
   return children
 }
 
-const LoginLayout = () => {
+const LoginLayout = ({notification}) => {
   return (
     <>
+      <Notification notification={notification}/>
       <Outlet />
     </>
   )
@@ -65,6 +67,7 @@ const Layout = ({ setSearchText, searchText, setToken }) => {
 
   return (
     <RequireAuth>
+      <Notification />
       <Nav setToken={setToken} />
       <main>
         <Search
@@ -81,6 +84,7 @@ const Layout = ({ setSearchText, searchText, setToken }) => {
 function App() {
   const [searchText, setSearchText] = useState('')
   const [showsData, setShowsData] = useState([])
+  const [notification, setNotification] = useState({})
   const [token, setToken] = useState(localStorage.getItem('user-token'))
 
   useEffect(() => {
@@ -97,14 +101,24 @@ function App() {
     )
   }
 
+  let timeoutID
+
+  const handleNotification = (value) => {
+    setNotification(value)
+    clearTimeout(timeoutID)
+    timeoutID = setTimeout(() => {
+      setNotification({})
+    }, 5000)
+  }
+
   const movies = showsData.filter((show) => show.category === 'Movie')
   const tvSeries = showsData.filter((show) => show.category === 'TV Series')
   const bookmarkedShows = showsData.filter((show) => show.isBookmarked)
 
   return (
     <Routes className="App">
-      <Route path="/" element={<LoginLayout />}>
-        <Route path="login" element={<Login setToken={setToken}/>} />
+      <Route path="/" element={<LoginLayout notification={notification}/>}>
+        <Route path="login" element={<Login setToken={setToken} setNotification={handleNotification}/>} />
         <Route path="signup" element={<Signup setToken={setToken}/>} />
       </Route>
       <Route path="/" element={<Layout searchText={searchText} setSearchText={setSearchText} setToken={setToken} />}>

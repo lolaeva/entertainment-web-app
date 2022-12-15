@@ -5,8 +5,7 @@ import Logo from '../assets/icons/logo.svg'
 
 import loginService from '../services/loginService'
 
-
-const Login = ({setToken}) => {
+const Login = ({ setToken, setNotification }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
@@ -15,14 +14,21 @@ const Login = ({setToken}) => {
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    const user = await loginService.login({email, password})
-    if(user.token) {
-      localStorage.setItem('user-token', user.token)
-      navigate(from, { replace: true })
-      setToken(user.token)
+    try {
+      const user = await loginService.login({ email, password })
+      if (user && user.token) {
+        localStorage.setItem('user-token', user.token)
+        navigate(from, { replace: true })
+        setToken(user.token)
+      }
+    } catch (error) {
+      let errorMessage = error?.response?.data?.error
+        ? error?.response?.data?.error
+        : 'Something went wrong, please try again'
+
+      setNotification({ message: errorMessage, type: 'error' })
     }
   }
-
 
   return (
     <div className="login-section">

@@ -107,6 +107,58 @@ a {
   color: var(--focus-color);
 }
 
+.notification {
+  position: absolute;
+  color: var(--grayscale-0-color);
+  margin: 10px 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;  
+  z-index: 1001;
+  cursor: default;
+  transition: all 0.6s ease-in-out;
+}
+
+.notification.hidden {
+  width: 20%;
+  transform: translate(-50%, -50px);
+}
+
+.notification.error {
+  background-color: var(--focus-color);
+}
+
+.notification-message {
+  margin-right: 20px;
+  font-size: 1.2rem;
+}
+
+.notification-button {
+  width: 20px;
+  height: 20px;
+}
+
+.notification-button::after, .notification-button::before  {
+  position: absolute;
+  content: '';
+  background: var(--grayscale-0-color);
+  width: 2px;
+  height: 20px;
+  right: 16px;
+  top: 9px;
+}
+
+.notification-button::before  {
+  transform: rotate(45deg);
+}
+
+.notification-button::after  {
+  transform: rotate(-45deg);
+}
+
 .navigation {
   background-color: var(--primary-color);
   position: fixed;
